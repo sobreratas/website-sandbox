@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://kit.fontawesome.com/8efc22d7af.js" crossorigin="anonymous"></script>
+    <script src="app.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+
+
+        body {
+            position: relative;
+            /* this streches the video to the bottom of its container */
+        }
+
+        /* NAV BAR STYLES */
+
+        nav {
+            position: fixed;
+            height: 96px;
+            width: 100%;
+            top: 0px;
+            z-index: 9999;
+            background-color: rgb(190, 190, 190);
+            color: #fff;
+
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin: 0 12%;
+        }
+
+        .menu-btn {
+            font-size: 1.7rem;
+            cursor: pointer;
+            gap: 15px;
+
+        }
+
+        .menu-btn-mobile {
+            display: none;
+            font-size: 1.7rem;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            font-size: 1.6rem;
+        }
+
+        .x-bar-container {
+            display: flex;
+            flex-grow: 1;
+            flex-basis: 0;
+        }
+
+        .menu-btn.x-bar-container {
+            justify-content: start;
+        }
+
+        .logo.x-bar-container {
+            justify-content: center;
+        }
+
+        .social-icons.x-bar-container {
+            justify-content: end;
+        }
+
+        /* MENU EXPANDED STYLES */
+
+        .menu-expanded {
+            opacity: 0;
+            margin-top: 96px;
+            height: 100vh;
+            background-color: rgb(190, 190, 190);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999999;
+            transition: opacity .3s ease-in;
+
+        }
+
+        .menu-expanded ul {
+            text-align: center;
+            color: #fff;
+            /* display: table;
+            margin: auto; */
+        }
+
+        .menu-expanded ul li {
+            text-decoration: none;
+            list-style: none;
+            font-size: 3rem;
+            margin-top: 20px;
+        }
+
+        .fa-times {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999999;
+            color: #fff;
+            opacity: 0;
+            font-size: 3rem;
+            cursor: pointer;
+        }
+
+        /* CONTENT ROW STYLES */
+
+        .x-row {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: auto;
+        }
+
+        .album-cover {
+            max-width: 100%;
+        }
+
+        /* OFFSET TOP CONTAINER BY HEIGHT OF NAV BAR */
+        .top-container {
+            margin-top: 96px;
+        }
+
+        /* BOX GENERIC STYLES */
+        .box {
+            flex-basis: 50%;
+            background-color: rgba(0, 88, 122, 0.4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            gap: 20px;
+            color: #fff;
+        }
+
+
+
+        .full-box {
+            flex-basis: 50%;
+        }
+
+        .full-box iframe {
+            width: 100%;
+            height: 100%;
+        }
+
+        .full-inner-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+            height: 100%;
+            padding: 100px 20px;
+            background-color: green;
+        }
+
+        .full-inner-box-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 10px 0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .full-inner-box-left iframe {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            /* Maintain 16:9 aspect ratio */
+            max-width: 100%;
+        }
+
+        .background-clip {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+        }
+
+        .half-screen {
+            flex-basis: 50%;
+            position: relative;
+            overflow: hidden;
+
+        }
+
+        .half-screen img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .first-half {
+            background-color: black;
+        }
+
+        .second-half {
+            background-color: gray;
+        }
+
+        .half-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+        }
+
+        .half-image {
+            /* Initially hidden */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .show {
+            opacity: 1;
+            /* Show the element */
+        }
+
+        .half-image-1 {
+            transform: translateX(-100%);
+        }
+
+        .half-image-1.show {
+            animation: slideIn 0.5s ease forwards;
+            transform: translateX(0);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+            }
+
+            to {
+                transform: translateX(0%);
+            }
+        }
+
+        .intersect-rect-2 {
+            background-color: black;
+            position: relative;
+            height: 400px;
+        }
+
+        .sliding-block {
+            background-color: gray;
+            width: 100%;
+            height: 100%;
+            transform: translateX(-100%);
+            position: relative;
+        }
+
+        .sliding-block.show {
+            animation: slideIn 0.5s ease forwards;
+            transform: translateX(0);
+        }
+
+        .half-image-2 {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            opacity: 0;
+        }
+
+        .half-image-2.show {
+            opacity: 1;
+            transition: .5s ease-in;
+            transition-delay: .2s;
+        }
+
+        .half-text-2 {
+            z-index: 5;
+        }
+
+
+
+
+
+        @media (min-aspect-ratio:16/9) {
+            .background-clip {
+                width: 100%;
+                height: auto;
+            }
+        }
+
+        @media (max-aspect-ratio:16/9) {
+            .background-clip {
+                width: auto;
+                height: 100%;
+            }
+        }
+
+        @media only screen and (max-width: 768px) {
+            .box {
+                flex-basis: 100%;
+            }
+
+            .full-box {
+                flex-basis: 100%;
+            }
+
+            .full-box iframe {
+                width: 100%;
+                margin: 0;
+            }
+
+            .nav-content {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .menu-btn {
+                display: none;
+            }
+
+            .menu-btn-mobile {
+                display: block;
+            }
+
+            .logo {
+                font-size: 2rem;
+                flex-grow: 1;
+            }
+
+            .logo.x-bar-container {
+                justify-content: start;
+            }
+
+            .social-icons {
+                display: none;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <div class="nav-content">
+                    <div class="menu-btn x-bar-container" onclick="openModal()">
+                        <i class=" fa-solid fa-bars"></i>Menu
+                    </div>
+                    <div class="logo x-bar-container">BAND LOGO</div>
+                    <div class="social-icons x-bar-container">
+                        <i class="fa-brands fa-facebook"></i>
+                        <i class="fa-brands fa-youtube"></i>
+                        <i class="fa-brands fa-instagram"></i>
+                        <i class="fa-brands fa-spotify"></i>
+                        <i class="fa-brands fa-apple"></i>
+                    </div>
+                    <div class="menu-btn-mobile">
+                        <i class=" fa-solid fa-bars mobile-bars" onclick="openMobileModal()"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="menu-expanded">
+        <ul>
+            <li>Music</li>
+            <li>Video</li>
+            <li>Tour</li>
+            <li>Merch</li>
+        </ul>
+    </div>
+    <span onclick="closeModal()"> <i class="fa-solid fa-times"></i></span>
+
+    <!-- Haken album cover and Spotify -->
+    <div class="x-row top-container">
+        <video autoplay loop muted plays-inline class="background-clip">
+            <source src="video (2160p).mp4" type="video/mp4">
+        </video>
+        <div class="box">
+            <img class="album-cover" src="/2-undefined.jpg" alt="">
+        </div>
+        <div class="box">
+            <h1>Undefined</h1>
+            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo rem facilis eum error, nobis ipsum
+                assumenda deleniti ipsa officia omnis placeat. Ipsa est expedita odio officiis delectus repellat autem
+                esse.</p>
+            <iframe style="border-radius:12px"
+                src="https://open.spotify.com/embed/album/2r0nKvpzWe3Ycj8Bi7CXKR?utm_source=generator" width="100%"
+                height="352" frameBorder="0" allowfullscreen=""
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                loading="lazy"></iframe>
+
+        </div>
+    </div>
+
+    <!-- Haken video and quote -->
+    <div class="x-row">
+        <div class="full-box">
+            <div class="full-inner-box-left">
+                <iframe src="https://www.youtube.com/embed/-unASUgYtVI?si=AWFgDD_mzefbUtXz" title="YouTube video player"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen></iframe>
+            </div>
+
+        </div>
+        <div class="full-box">
+            <div class="full-inner-box">
+                <h1>Haken - Lovebite </h1>
+                <p>“What better song to put out on this fine Valentine's Day 2023 than one about the Black Widow Spider
+                    mating ritual! This is the Phil Collins inspired upbeat love song in 11/8 with Cannibal Corpse
+                    inspired
+                    lyrics that you never knew you needed!”</p>
+                <h2>ROSS JENNINGS, HAKEN</h2>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Ferrari appear -->
+    <div class="x-row">
+        <div class="half-screen first-half">
+            <img class="half-image" src="car1.jpg" alt="">
+            <h1 class="half-text">This is a nice car.</h1>
+        </div>
+        <div class="half-screen second-half">
+            <img class="half-image" src="car2.jpg" alt="">
+            <h1 class="half-text">This is another nice car.</h1>
+        </div>
+    </div>
+
+    <!-- Ferrari slide in...kind of -->
+    <div class="x-row">
+        <div class="half-screen first-half intersect-rect">
+            <img class="half-image-1" src="car1.jpg" alt="">
+            <h1 class="half-text">This is a nice car.</h1>
+        </div>
+        <div class="half-screen second-half intersect-rect">
+            <img class="half-image-1" src="car2.jpg" alt="">
+            <h1 class="half-text">This is another nice car.</h1>
+        </div>
+    </div>
+
+    <!-- Ferrari slide in...kind of -->
+    <div class="x-row">
+        <div class="half-screen first-half intersect-rect-2">
+            <div class="sliding-block"> </div>
+            <img class="half-image-2" src="car1.jpg" alt="">
+
+            <h1 class="half-text-2">This is a nice car.</h1>
+        </div>
+        <div class="half-screen second-half intersect-rect-2">
+            <div class="sliding-block"></div>
+            <img class="half-image-2" src="car2.jpg" alt="">
+
+            <h1 class="half-text-2">This is another nice car.</h1>
+        </div>
+    </div>
+    <!-- <script>
+        const menuBtn = document.querySelector(".menu-btn");
+        const menuExpanded = document.querySelector(".menu-expanded");
+        const nav = document.querySelector("nav");
+        const xMark = document.querySelector(".fa-times");
+        const mobileBarsBtn = document.querySelector(".mobile-bars");
+
+        function openModal() {
+            console.log("clicked")
+            menuBtn.addEventListener("click", () => {
+                menuExpanded.style.opacity = "1"
+                nav.style.color = "rgb(190, 190, 190)"
+                xMark.style.opacity = "1";
+            })
+        }
+
+        function closeModal() {
+            menuExpanded.style.opacity = "0"
+            nav.style.color = "#fff"
+            xMark.style.opacity = "0";
+        }
+
+        function openMobileModal() {
+            console.log("clicked")
+            mobileBarsBtn.addEventListener("click", () => {
+                menuExpanded.style.opacity = "1"
+                nav.style.color = "rgb(190, 190, 190)"
+                xMark.style.opacity = "1";
+            })
+        }
+    </script> -->
+    <script>
+        const menuBtn = document.querySelector(".menu-btn");
+        const menuExpanded = document.querySelector(".menu-expanded");
+        const nav = document.querySelector("nav");
+        const xMark = document.querySelector(".fa-times");
+        const mobileBarsBtn = document.querySelector(".mobile-bars");
+
+        // Attach event listeners when the page loads
+        menuBtn.addEventListener("click", () => {
+            menuExpanded.style.opacity = "1";
+            nav.style.color = "rgb(190, 190, 190)";
+            xMark.style.opacity = "1";
+        });
+
+        mobileBarsBtn.addEventListener("click", () => {
+            menuExpanded.style.opacity = "1";
+            nav.style.color = "rgb(190, 190, 190)";
+            xMark.style.opacity = "1";
+        });
+
+        function closeModal() {
+            menuExpanded.style.opacity = "0";
+            nav.style.color = "#fff";
+            xMark.style.opacity = "0";
+        }
+    </script>
+
+</body>
+
+</html>
